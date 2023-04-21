@@ -156,3 +156,11 @@ cython_debug/
 .idea/
 
 commit.bat
+
+.bashrc
+.gitconfig
+.local/
+.profile
+.pythonstartup.py
+.vimrc
+.virtualenvs/
