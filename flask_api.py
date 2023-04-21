@@ -69,4 +69,4 @@ def user_request():
 
 if __name__ == '__main__':
     # запускаем сервер
-    app.run(port=5000)
+    app.run()
