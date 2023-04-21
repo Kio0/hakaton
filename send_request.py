@@ -4,8 +4,6 @@ import json
 
 def send_request(data, route='auth'):
     # конвертируем данные в формат json
-
-    print(data)
     json_data = json.dumps(data)
 
     # устанавливаем заголовок Content-Type для отправки запроса в формате json
@@ -16,7 +14,7 @@ def send_request(data, route='auth'):
     # получаем ответ в формате json
     try:
         result = response.json()
-    except:
+    except Exception:
         result = response
     # возвращаем ответ
     return result
