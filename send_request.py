@@ -12,7 +12,10 @@ def send_request(data,Type='auth'):
     response = requests.post(f'http://localhost:5000/{Type}', data=json_data, headers=headers)
     
     # получаем ответ в формате json
-    result = response
+    try:
+        result = response.json()
+    except:
+        result = response
     # возвращаем ответ
     return result
 
@@ -20,6 +23,10 @@ def send_request(data,Type='auth'):
 
 data = {'email': 'John@gmial.co,', 'password': '25gggg', 'registr':True, 'type':'person'}
 
-token = send_request(data,'get')
+token = send_request(data,'auth')
 
 print(token)  # выведет {'result': {'name': 'John', 'age': 25}}
+
+data = send_request({'token':token}, 'get')
+
+print(data)

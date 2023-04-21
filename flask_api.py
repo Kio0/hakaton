@@ -15,11 +15,12 @@ def func_set_request(data):
 
 def func_get_request(data):
     token = data.get('token')
-
+    print(token)
     if not(auth.test_correct(token)):
         return('Токен некорректный')
 
-    return(auth.get_user_data(auth.get('token')))
+    #print((auth.get_user_data(data.get('token'))))
+    return((auth.get_user_data(data.get('token'))))
     
     
 
@@ -64,25 +65,24 @@ def auth_request():
         return jsonify({'error': 'invalid request format'})
 
 @app.route('/get', methods=['POST'])
-def get_request(data):
-    print('!')
-    '''
+def get_request():
+
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
         # получаем данные из запроса в формате json
         data = request.json
         # выполняем функцию get_request и получаем результат
         result = func_get_request(data)
+        print(result)
         # возвращаем результат в формате json
         return jsonify(result)
     else:
         # если запрос не имеет формат json, возвращаем ошибку
         return jsonify({'error': 'invalid request format'})
-    '''
-    return jsonify({'error': 'invalid request format'})
+
 
 @app.route('/set', methods=['POST'])
-def set_request(data):
+def set_request():
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
         # получаем данные из запроса в формате json
@@ -90,6 +90,7 @@ def set_request(data):
         # выполняем функцию get_request и получаем результат
         result = func_set_request(data)
         # возвращаем результат в формате json
+        print(result)
         return jsonify(result)
     else:
         # если запрос не имеет формат json, возвращаем ошибку
@@ -101,4 +102,4 @@ if __name__ == '__main__':
     # запускаем локальный сервер на порту 5000
     app.run(port=5000)
 
-get_request()
+#func_get_request({'token':'F6a2c361fA2Cbe47aA8DBbD2DD8185F8'})

@@ -4,6 +4,9 @@ import os
 from datetime import datetime
 import random
 import string
+from flask import Flask, request, jsonify
+import json
+import binascii
 
 
 def gen_table():
@@ -88,25 +91,32 @@ def generate_token():
     return token
 
 #Генерирует пароль со случайной солью, если сольне указана. Если указано - с указанной
+
 def hash_password(password, salt=None):
-    if salt!=None:
+    if salt is not None:
+        if isinstance(salt, str):
+            salt_bytes = binascii.unhexlify(salt)
+        else:
+            salt_bytes = salt
         password_bytes = password.encode('utf-8')
-        salt_bytes = salt
         hash_result = hashlib.sha1(password_bytes + salt_bytes).hexdigest()
         return hash_result
-    
+
     # Генерируем случайную соль
-    salt = os.urandom(16)
-    
+    salt = os.urandom(8)
+
+    # Конвертируем соль в шестнадцатеричную строку
+    salt_hex = binascii.hexlify(salt).decode('utf-8')[:6]
+
     # Конвертируем пароль и соль в байты
     password_bytes = password.encode('utf-8')
-    salt_bytes = salt
-    
+    salt_bytes = binascii.unhexlify(salt_hex)
+
     # Хэшируем пароль и соль
     hash_result = hashlib.sha1(password_bytes + salt_bytes).hexdigest()
-    
+
     # Возвращаем хэш и соль
-    return (hash_result, salt)
+    return (hash_result, salt_hex)
 
 # 
 def add_user_to_database(email, password, Type=None):
@@ -213,18 +223,21 @@ def get_user_data(token):
     }
 
     # преобразуем словарь в JSON и возвращаем его
-    return json.dumps(user_data)
-
+    #return jsonify(json.dumps(user_data))
+    return((user_data))
 
 
 if not(os.path.isfile('database.db')):
     gen_table()
 
-print(auth_user('admin@gamil.com','admin'))
-
-#print(add_user_to_database('admin123@gamil.com','admin'))
-
 #print(auth_user('admin@gamil.com','admin'))
+
+#print(add_user_to_database('admin1234@gamil.com','admin'))
+#print(add_user_to_database('admin@gamil.com','admin'))
+#print(add_user_to_database('admin4@gamil.com','admin'))
+
+
+#print(auth_user('admin1234@gamil.com','admin'))
 
 
 
