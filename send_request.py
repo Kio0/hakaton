@@ -12,17 +12,14 @@ def send_request(data, route='auth'):
     response = requests.post(f'http://lkjhytre.pythonanywhere.com/{route}', data=json_data, headers=headers)
 
     # получаем ответ в формате json
-    try:
-        result = response.json()
-    except Exception:
-        result = response
+    result = response.json()
     # возвращаем ответ
     return result
 
 
-data = {'email': 'John@gmial.co,', 'password': '25gggg', 'registr': False, 'type': 'person'}
-token = send_request(data, 'auth')
+user = {'email': 'John@gmial.co,', 'password': '25gggg', 'registr': False, 'type': 'person'}
+token = send_request(user, 'auth')
 print(token)  # выведет {'result': {'name': 'John', 'age': 25}}
 
-data = send_request({'token': token}, 'get')
-print(data)
+user = send_request({'token': token}, 'get')
+print(user)
