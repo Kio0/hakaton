@@ -11,6 +11,14 @@ class UserExistsError(Exception):
     pass
 
 
+class UserNotFoundError(Exception):
+    pass
+
+
+class WrongPasswordError(Exception):
+    pass
+
+
 def gen_table():
     # Подключение к базе данных
     conn = sqlite3.connect('mydatabase.db')
@@ -199,10 +207,10 @@ def get_token(email, password):
     c.execute("SELECT * FROM users WHERE email=?", (email,))
     user = c.fetchone()
 
-    # Если пользователь не найден, возвращаем 404
+    # Если пользователь не найден, вызываем ошибку
     if user is None:
         conn.close()
-        return "403"
+        raise UserNotFoundError('User not found')
 
     # Получаем соль, хэш и токен пользователя
     salt = user[3]
@@ -212,10 +220,10 @@ def get_token(email, password):
     # Хэшируем введенный пароль с использованием соли
     hashed_input_password = hash_password(password, salt)
 
-    # Если хэшированный пароль не соответствует сохраненному, возвращаем 401
+    # Если хэшированный пароль не соответствует сохраненному, вызываем ошибку
     if hashed_input_password != hashed_password:
         conn.close()
-        return "401"
+        raise WrongPasswordError('Wrong password')
 
     return token
 

@@ -39,7 +39,14 @@ def login_request():
         # проверяем данные
         if 'email' in data and 'password' in data:
             # добавляем пользователя в базу данных
-            token = auth.get_token(data['email'], data['password'])
+            try:
+                token = auth.get_token(data['email'], data['password'])
+            # если пользователь не найден, возвращаем ошибку
+            except auth.UserNotFoundError:
+                return jsonify({'error': 'user not found'})
+            # если пароль неверный, возвращаем ошибку
+            except auth.WrongPasswordError:
+                return jsonify({'error': 'wrong password'})
             # возвращаем результат в формате json
             return jsonify({'token': token})
         # если в запросе присутствуют не все данные, возвращаем ошибку
@@ -54,7 +61,7 @@ def user_request():
     # получаем токен из заголовков
     token = request.headers.get('token')
     # Проверяем токен
-    if not (auth.test_correct(token)):
+    if not auth.test_correct(token):
         return jsonify({'error': 'invalid token'})
     # возвращаем результат в формате json
     return jsonify(auth.get_user_data(token))
