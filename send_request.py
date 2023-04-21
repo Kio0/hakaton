@@ -35,9 +35,8 @@ def get_token(user):
 
 
 def get_user(token):
-    # устанавливаем заголовок Content-Type для отправки запроса в формате json
-    # и токен
-    headers = {'Content-Type': 'application/json', 'token': token}
+    # устанавливаем заголовок token
+    headers = {'token': token}
     # отправляем POST-запрос на API сервер
     response = requests.get(f'http://lkjhytre.pythonanywhere.com/user', headers=headers)
     # response = requests.get(f'http://localhost:5000/user', headers=headers)
@@ -48,7 +47,7 @@ def get_user(token):
     return user
 
 
-user = {'email': 'Josh123@gmial.co,', 'password': '2533gggg', 'type': 'person'}
+user = {'email': 'Josh123@gmial.com', 'password': '2533gggg', 'type': 'person'}
 print(auth_user(user))
 
 user.pop('type')

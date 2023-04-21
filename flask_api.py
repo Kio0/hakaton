@@ -51,18 +51,13 @@ def login_request():
 
 @app.route('/user', methods=['GET'])
 def user_request():
-    # проверяем, что запрос имеет формат json
-    if request.headers['Content-Type'] == 'application/json':
-        # получаем токен из заголовков
-        token = request.headers.get('token')
-        # Проверяем токен
-        if not (auth.test_correct(token)):
-            return jsonify({'error': 'invalid token'})
-        # возвращаем результат в формате json
-        return jsonify(auth.get_user_data(token))
-    else:
-        # если запрос не имеет формат json, возвращаем ошибку
-        return jsonify({'error': 'invalid request format'})
+    # получаем токен из заголовков
+    token = request.headers.get('token')
+    # Проверяем токен
+    if not (auth.test_correct(token)):
+        return jsonify({'error': 'invalid token'})
+    # возвращаем результат в формате json
+    return jsonify(auth.get_user_data(token))
 
 
 if __name__ == '__main__':
