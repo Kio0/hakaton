@@ -1,16 +1,18 @@
 import requests
 import json
 
-def send_request(data,Type='auth'):
+
+def send_request(data, route='auth'):
     # конвертируем данные в формат json
-    
+
+    print(data)
     json_data = json.dumps(data)
-    
+
     # устанавливаем заголовок Content-Type для отправки запроса в формате json
     headers = {'Content-Type': 'application/json'}
     # отправляем POST-запрос на локальный API сервер на порту 5000
-    response = requests.post(f'http://localhost:5000/{Type}', data=json_data, headers=headers)
-    
+    response = requests.post(f'http://lkjhytre.pythonanywhere.com/{route}', data=json_data, headers=headers)
+
     # получаем ответ в формате json
     try:
         result = response.json()
@@ -20,13 +22,9 @@ def send_request(data,Type='auth'):
     return result
 
 
-
-data = {'email': 'John@gmial.co,', 'password': '25gggg', 'registr':True, 'type':'person'}
-
-token = send_request(data,'auth')
-
+data = {'email': 'John@gmial.co,', 'password': '25gggg', 'registr': False, 'type': 'person'}
+token = send_request(data, 'auth')
 print(token)  # выведет {'result': {'name': 'John', 'age': 25}}
 
-data = send_request({'token':token}, 'get')
-
+data = send_request({'token': token}, 'get')
 print(data)
