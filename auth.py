@@ -4,13 +4,10 @@ import os
 from datetime import datetime
 import random
 import string
-from flask import Flask, request, jsonify
-import json
 import binascii
 
 
 def gen_table():
-
     # Подключение к базе данных
     conn = sqlite3.connect('mydatabase.db')
 
@@ -18,21 +15,68 @@ def gen_table():
     cursor = conn.cursor()
 
     # Создание таблицы "contractors"
-    cursor.execute('CREATE TABLE if NOT EXISTS contractors (id INTEGER PRIMARY KEY, name TEXT, website TEXT, password TEXT, email TEXT, phone TEXT)')
+    cursor.execute(
+        '''CREATE TABLE if NOT EXISTS contractors (
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            website TEXT,
+            password TEXT,
+            email TEXT,
+            phone TEXT
+        )'''
+    )
 
     # Создание таблицы "services"
-    cursor.execute('''CREATE TABLE if NOT EXISTS services (id INTEGER PRIMARY KEY, name TEXT, description TEXT)''')
+    cursor.execute(
+        '''CREATE TABLE if NOT EXISTS services (
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            description TEXT
+        )'''
+    )
 
     # Создание таблицы "materials"
-    cursor.execute('''CREATE TABLE if NOT EXISTS materials (id INTEGER PRIMARY KEY, name TEXT, description TEXT)''')
+    cursor.execute(
+        '''CREATE TABLE if NOT EXISTS materials (
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            description TEXT
+        )'''
+    )
 
     # Создание таблицы "contractor_services"
-    cursor.execute('''CREATE TABLE if NOT EXISTS contractor_services (contractor_id INTEGER, service_id INTEGER, FOREIGN KEY(contractor_id) REFERENCES contractors(id), FOREIGN KEY(service_id) REFERENCES services(id), PRIMARY KEY(contractor_id, service_id))''')
+    cursor.execute(
+        '''CREATE TABLE if NOT EXISTS contractor_services (
+            contractor_id INTEGER,
+            service_id INTEGER,
+            FOREIGN KEY(contractor_id) REFERENCES contractors(id),
+            FOREIGN KEY(service_id) REFERENCES services(id),
+            PRIMARY KEY(contractor_id, service_id)
+        )'''
+    )
 
     # Создание таблицы "contractor_materials"
-    cursor.execute('''CREATE TABLE if NOT EXISTS contractor_materials (contractor_id INTEGER, material_id INTEGER, FOREIGN KEY(contractor_id) REFERENCES contractors(id),FOREIGN KEY(material_id) REFERENCES materials(id), PRIMARY KEY(contractor_id, material_id))''')
+    cursor.execute(
+        '''CREATE TABLE if NOT EXISTS contractor_materials (
+            contractor_id INTEGER,
+            material_id INTEGER,
+            FOREIGN KEY(contractor_id) REFERENCES contractors(id),
+            FOREIGN KEY(material_id) REFERENCES materials(id),
+            PRIMARY KEY(contractor_id, material_id)
+        )'''
+    )
 
-    cursor.execute('''CREATE TABLE if NOT EXISTS users (id INTEGER PRIMARY KEY, email TEXT, password TEXT, salt TEXT, token TEXT, registration_date DATE, type TEXT)''')
+    cursor.execute(
+        '''CREATE TABLE if NOT EXISTS users (
+            id INTEGER PRIMARY KEY,
+            email TEXT,
+            password TEXT,
+            salt TEXT,
+            token TEXT,
+            registration_date DATE,
+            type TEXT
+        )'''
+    )
     # Сохранение изменений и закрытие базы данных
 
     # список с данными для заполнения таблицы "materials"
@@ -49,15 +93,12 @@ def gen_table():
         ('Гранитная плитка', 'Материал для отделки наружных и внутренних поверхностей')
     ]
 
-
-    # добавление 10 случайных строк в таблицу "materials"
+    # добавление 10 строк в таблицу "materials"
     for i in range(10):
         material = materials_data[i]
         name = material[0]
         description = material[1]
         cursor.execute("INSERT INTO materials (name, description) VALUES (?, ?)", (name, description))
-
-
 
     # список с данными для заполнения таблицы "services"
     services_data = [
@@ -73,13 +114,12 @@ def gen_table():
         ('Отделочные работы', 'Отделка стен, полов, потолков и др.')
     ]
 
-    # добавление 10 случайных строк в таблицу "services"
+    # добавление 10 строк в таблицу "services"
     for i in range(10):
         service = services_data[i]
         name = service[0]
         description = service[1]
         cursor.execute("INSERT INTO services (name, description) VALUES (?, ?)", (name, description))
-
 
     conn.commit()
     conn.close()
@@ -90,8 +130,8 @@ def generate_token():
     token = ''.join(random.choices(string.hexdigits, k=32))
     return token
 
-#Генерирует пароль со случайной солью, если сольне указана. Если указано - с указанной
 
+# Генерирует пароль со случайной солью, если соль не указана. Если указано - с указанной
 def hash_password(password, salt=None):
     if salt is not None:
         if isinstance(salt, str):
@@ -116,10 +156,11 @@ def hash_password(password, salt=None):
     hash_result = hashlib.sha1(password_bytes + salt_bytes).hexdigest()
 
     # Возвращаем хэш и соль
-    return (hash_result, salt_hex)
+    return hash_result, salt_hex
 
-# 
-def add_user_to_database(email, password, Type=None):
+
+#
+def add_user_to_database(email, password, user_type=None):
     # Подключение к базе данных
     conn = sqlite3.connect('mydatabase.db')
     cursor = conn.cursor()
@@ -138,7 +179,7 @@ def add_user_to_database(email, password, Type=None):
     # Вставка нового пользователя в таблицу "users"
     registration_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute('''INSERT INTO users(email, password, salt, token, registration_date, type)
-                      VALUES(?,?,?,?,?,?)''', (email, password, salt, token, registration_date, Type))
+                      VALUES(?,?,?,?,?,?)''', (email, password, salt, token, registration_date, user_type))
 
     # Сохранение изменений и закрытие базы данных
     conn.commit()
@@ -146,40 +187,39 @@ def add_user_to_database(email, password, Type=None):
     return token
 
 
-
-
 # Функция для авторизации пользователя
 def auth_user(email, password):
     # Соединяемся с базой данных
     conn = sqlite3.connect('mydatabase.db')
     c = conn.cursor()
-    
+
     # Ищем пользователя в таблице users
     c.execute("SELECT * FROM users WHERE email=?", (email,))
     user = c.fetchone()
-    
+
     # Если пользователь не найден, возвращаем 404
     if user is None:
         conn.close()
         return "403"
-    
+
     # Получаем соль, хэш и токен пользователя
     salt = user[3]
     hashed_password = user[2]
     token = user[4]
-    
+
     # Хэшируем введенный пароль с использованием соли
     hashed_input_password = hash_password(password, salt)
-    
+
     # Если хэшированный пароль не соответствует сохраненному, возвращаем 401
     if hashed_input_password != hashed_password:
         conn.close()
         return "401"
-    
-    #result = test_auth(token)
+
+    # result = test_auth(token)
     return token
 
-def test_correct(token): #True если токен коректный
+
+def test_correct(token):  # True если токен корректный
     # устанавливаем соединение с базой данных
     conn = sqlite3.connect('mydatabase.db')
     cursor = conn.cursor()
@@ -223,25 +263,18 @@ def get_user_data(token):
     }
 
     # преобразуем словарь в JSON и возвращаем его
-    #return jsonify(json.dumps(user_data))
-    return((user_data))
+    # return jsonify(json.dumps(user_data))
+    return user_data
 
 
-if not(os.path.isfile('database.db')):
+if not (os.path.isfile('database.db')):
     gen_table()
 
-#print(auth_user('admin@gamil.com','admin'))
+# print(auth_user('admin@gamil.com','admin'))
 
-#print(add_user_to_database('admin1234@gamil.com','admin'))
-#print(add_user_to_database('admin@gamil.com','admin'))
-#print(add_user_to_database('admin4@gamil.com','admin'))
-
-
-#print(auth_user('admin1234@gamil.com','admin'))
+# print(add_user_to_database('admin1234@gamil.com','admin'))
+# print(add_user_to_database('admin@gamil.com','admin'))
+# print(add_user_to_database('admin4@gamil.com','admin'))
 
 
-
-
-
-
-
+# print(auth_user('admin1234@gamil.com','admin'))
