@@ -7,6 +7,10 @@ import string
 import binascii
 
 
+class UserExistsError(Exception):
+    pass
+
+
 def gen_table():
     # Подключение к базе данных
     conn = sqlite3.connect('mydatabase.db')
@@ -159,8 +163,7 @@ def hash_password(password, salt=None):
     return hash_result, salt_hex
 
 
-#
-def add_user_to_database(email, password, user_type=None):
+def add_user_to_database(email, password, user_type):
     # Подключение к базе данных
     conn = sqlite3.connect('mydatabase.db')
     cursor = conn.cursor()
@@ -170,7 +173,7 @@ def add_user_to_database(email, password, user_type=None):
     user = cursor.fetchone()
     if user:
         conn.close()
-        return "Пользователь с такой почтой уже существует"
+        raise UserExistsError("Пользователь с заданной почтой уже существует")
 
     # Хэширование пароля и генерация токена
     password, salt = hash_password(password)
@@ -184,11 +187,10 @@ def add_user_to_database(email, password, user_type=None):
     # Сохранение изменений и закрытие базы данных
     conn.commit()
     conn.close()
-    return token
 
 
-# Функция для авторизации пользователя
-def auth_user(email, password):
+# Функция для получения токена
+def get_token(email, password):
     # Соединяемся с базой данных
     conn = sqlite3.connect('mydatabase.db')
     c = conn.cursor()
@@ -215,7 +217,6 @@ def auth_user(email, password):
         conn.close()
         return "401"
 
-    # result = test_auth(token)
     return token
 
 
@@ -255,26 +256,16 @@ def get_user_data(token):
     user_data = {
         'id': result[0],
         'email': result[1],
-        'password': result[2],
-        'salt': result[3],
+        # 'password': result[2],
+        # 'salt': result[3],
         'token': result[4],
         'registration_date': str(result[5]),
         'type': result[6]
     }
 
-    # преобразуем словарь в JSON и возвращаем его
-    # return jsonify(json.dumps(user_data))
     return user_data
 
 
-if not (os.path.isfile('database.db')):
-    gen_table()
-
-# print(auth_user('admin@gamil.com','admin'))
-
-# print(add_user_to_database('admin1234@gamil.com','admin'))
-# print(add_user_to_database('admin@gamil.com','admin'))
-# print(add_user_to_database('admin4@gamil.com','admin'))
-
-
-# print(auth_user('admin1234@gamil.com','admin'))
+if __name__ == '__main__':
+    if not (os.path.isfile('database.db')):
+        gen_table()

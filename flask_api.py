@@ -1,33 +1,9 @@
-from flask import Flask, request, jsonify
 import auth
 
+from flask import Flask, request, jsonify
+
+
 app = Flask(__name__)
-
-
-def func_set_request(data):
-    token = data.get('token')
-
-    if not (auth.test_correct(token)):
-        return 'Токен некорректный'
-
-
-def func_auth_request(data):
-    if data.get('token') is None:
-        if (data.get('email') is not None) and (data.get('password') is not None):
-            if data.get('registr'):
-                if data.get('type') is not None:
-                    return auth.add_user_to_database(data.get('email'), data.get('password'), data.get('type'))
-                else:
-                    return auth.add_user_to_database(data.get('email'), data.get('password'))
-            else:
-                return auth.auth_user(data.get('email'), data.get('password'))
-    else:
-        token = data.get('token')
-        if auth.test_correct(token):
-            return 'Токен корректный'
-        else:
-            return 'Токен некорректный'
-    return {'result': data}
 
 
 @app.route('/auth', methods=['POST'])
@@ -36,17 +12,45 @@ def auth_request():
     if request.headers['Content-Type'] == 'application/json':
         # получаем данные из запроса в формате json
         data = request.json
-        # выполняем функцию get_request и получаем результат
-        result = func_auth_request(data)
-        # возвращаем результат в формате json
-        return jsonify(result)
+        # проверяем данные
+        if 'email' in data and 'password' in data and 'type' in data:
+            # добавляем пользователя в базу данных
+            try:
+                auth.add_user_to_database(
+                    data['email'], data['password'], data['type']
+                )
+            except auth.UserExistsError:
+                return jsonify({'error': 'user already exists'})
+            # возвращаем результат в формате json
+            return jsonify({'response': 'user successfully registered'})
+        # если в запросе присутствуют не все данные, возвращаем ошибку
+        return jsonify({'error': 'invalid data'})
+    else:
+        # если запрос не имеет формат json, возвращаем ошибку
+        return jsonify({'error': 'invalid request format'})
+
+
+@app.route('/login', methods=['GET'])
+def login_request():
+    # проверяем, что запрос имеет формат json
+    if request.headers['Content-Type'] == 'application/json':
+        # получаем данные из запроса в формате json
+        data = request.json
+        # проверяем данные
+        if 'email' in data and 'password' in data:
+            # добавляем пользователя в базу данных
+            token = auth.get_token(data['email'], data['password'])
+            # возвращаем результат в формате json
+            return jsonify({'token': token})
+        # если в запросе присутствуют не все данные, возвращаем ошибку
+        return jsonify({'error': 'invalid data'})
     else:
         # если запрос не имеет формат json, возвращаем ошибку
         return jsonify({'error': 'invalid request format'})
 
 
 @app.route('/user', methods=['GET'])
-def get_request():
+def user_request():
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
         # получаем токен из заголовков
@@ -61,23 +65,6 @@ def get_request():
         return jsonify({'error': 'invalid request format'})
 
 
-@app.route('/set', methods=['POST'])
-def set_request():
-    # проверяем, что запрос имеет формат json
-    if request.headers['Content-Type'] == 'application/json':
-        # получаем данные из запроса в формате json
-        data = request.json
-        # выполняем функцию get_request и получаем результат
-        result = func_set_request(data)
-        # возвращаем результат в формате json
-        print(result)
-        return jsonify(result)
-    else:
-        # если запрос не имеет формат json, возвращаем ошибку
-        return jsonify({'error': 'invalid request format'})
-
-
 if __name__ == '__main__':
     # запускаем сервер
-    app.run()
-
+    app.run(port=5000)
