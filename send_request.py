@@ -8,7 +8,7 @@ def send_request(data, route='auth'):
 
     # устанавливаем заголовок Content-Type для отправки запроса в формате json
     headers = {'Content-Type': 'application/json'}
-    # отправляем POST-запрос на локальный API сервер на порту 5000
+    # отправляем POST-запрос на API сервер
     response = requests.post(f'http://lkjhytre.pythonanywhere.com/{route}', data=json_data, headers=headers)
 
     # получаем ответ в формате json
