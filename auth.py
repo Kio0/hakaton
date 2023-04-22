@@ -143,6 +143,30 @@ def add_user_to_database(email, password, user_type):
     conn.close()
 
 
+def update_user(id, email, services):
+    # Соединяемся с базой данных
+    conn = sqlite3.connect('mydatabase.db')
+    c = conn.cursor()
+
+    # Ищем пользователя в таблице users
+    c.execute("SELECT * FROM users WHERE id=?", (id,))
+    user = c.fetchone()
+
+    # Если пользователь не найден, вызываем ошибку
+    if user is None:
+        conn.close()
+        raise UserNotFoundError('User not found')
+
+    c.execute(
+        '''UPDATE table 
+        SET email=?
+        WHERE id=?''', (email, id)
+    )
+
+
+
+
+
 # Функция для получения токена
 def get_token(email, password):
     # Соединяемся с базой данных

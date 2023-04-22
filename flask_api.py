@@ -62,6 +62,29 @@ def user_request():
     return jsonify(auth.get_user_data(token))
 
 
+@app.route('/user', methods=['PATCH'])
+def user_update_request():
+    # проверяем, что запрос имеет формат json
+    if request.headers['Content-Type'] == 'application/json':
+        # получаем данные из запроса в формате json
+        data = request.json
+        # проверяем данные
+        if 'id' in data and 'email' in data and 'services' in data:
+            try:
+                # Обновляем пользователя
+                auth.update_user(data['id'], data['email'], data['services'])
+                # возвращаем результат в формате json
+                return jsonify({'response': 'user successfully updated'})
+            # если пользователь не найден, возвращаем ошибку
+            except auth.UserNotFoundError:
+                return jsonify({'error': 'user not found'})
+        # если в запросе присутствуют не все данные, возвращаем ошибку
+        return jsonify({'error': 'invalid data'})
+    else:
+        # если запрос не имеет формат json, возвращаем ошибку
+        return jsonify({'error': 'invalid request format'})
+
+
 if __name__ == '__main__':
     # запускаем сервер
     app.run()
