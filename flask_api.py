@@ -178,7 +178,7 @@ def service_map_request():
     return jsonify({'services': services})
 
 
-@app.route('/<table>', methods=['GET'])
+@app.route('/table/<table>', methods=['GET'])
 def table_request(table):
     # получаем токен из заголовков
     token = request.headers.get('token')
