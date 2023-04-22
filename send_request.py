@@ -96,6 +96,17 @@ def get_services(token):
     return response.json()
 
 
+def update_user(user):
+    # Формируем заголовок с токеном
+    headers = {'token': token, 'Content-Type': 'application/json'}
+
+    # Отправляем запрос POST с данными и заголовком
+    response = requests.patch('http://lkjhytre.pythonanywhere.com/user', json=user, headers=headers)
+
+    # Возвращаем статус-код ответа
+    return response.json()
+
+
 user = {'email': 'Josh1234@gmial.com', 'password': '2533gggg', 'name': 'Josh', 'description': '123', 'type': 'person'}
 print(auth_user(user))
 
@@ -106,6 +117,18 @@ token = response.get('token')
 
 user = get_user(token)
 print(user)
+
+user = {
+    "id": 1,
+    "name": "1",
+    "description": "111",
+    "services": [
+      "Монтаж натяжных потолков",
+      "Ремонт квартир"
+    ]
+}
+response = update_user(user)
+print(response)
 
 dock = send_document_api('test_dock.xlsx', token)
 print(dock)

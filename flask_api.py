@@ -21,7 +21,7 @@ def auth_request():
             # добавляем пользователя в базу данных
             try:
                 auth.add_user_to_database(
-                    data['email'], data['name'], data['description'], data['password'], data['type']
+                    data['email'], data.get('name', ''), data.get('description', ''), data['password'], data['type']
                 )
             except exceptions.UserExistsError:
                 return jsonify({'error': 'user already exists'})
