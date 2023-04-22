@@ -1,4 +1,5 @@
 import auth
+import documents
 
 from flask import Flask, request, jsonify
 
@@ -85,6 +86,40 @@ def user_update_request():
     else:
         # если запрос не имеет формат json, возвращаем ошибку
         return jsonify({'error': 'invalid request format'})
+
+
+@app.route('/dock', methods=['POST'])
+def send_dock():
+    print(1)
+    # проверяем, что запрос имеет формат json
+    if request.headers['Content-Type'] == 'application/json':
+        
+        # получаем токен из заголовков
+        token = request.headers.get('token')
+        # Проверяем токен
+        if not auth.test_correct(token):
+            return jsonify({'error': 'invalid token'})
+        
+        # получаем данные из запроса в формате json
+        data = request.json
+        # проверяем данные
+        filename=data.get('filename')
+        recipient_id=data.get('recipient_id')
+        sender_id=data.get('sender_id')
+        base64=data.get('base64')
+        if base64==None:
+            return jsonify({'response': 'not documents'})
+        if sender_id==None:
+            return jsonify({'response': 'not sender_id'})
+        if recipient_id==None:
+            return jsonify({'response': 'not recipient_id'})
+        if filename==None:
+            return jsonify({'response': 'not filename'})
+
+        documents.save_file(filename,base64,sender_id,recipient_id)  
+        
+
+
 
 
 if __name__ == '__main__':

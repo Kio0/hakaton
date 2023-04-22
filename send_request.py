@@ -1,6 +1,7 @@
 import requests
 import json
-
+import os
+import base64
 
 def auth_user(user):
     # конвертируем данные в формат json
@@ -39,6 +40,35 @@ def get_user(token):
     return user
 
 
+def send_document_api(filename, token, recipient_id=-1, sender_id=-1):
+    # Проверяем, что файл существует
+    if not os.path.isfile(filename):
+        print(f'Ошибка: файл {filename} не найден.')
+        return
+    
+    # Считываем файл в виде байтов и кодируем его содержимое в строку base64
+    with open(filename, 'rb') as f:
+        file_data = f.read()
+    file_data_base64 = base64.b64encode(file_data).decode('utf-8')
+    
+    # Формируем json-переменную с данными для отправки
+    data = {
+        'filename': filename,
+        'recipient_id': recipient_id,
+        'sender_id': sender_id,
+        'base64': file_data_base64
+    }
+    
+    # Формируем заголовок с токеном
+    headers = {'token': token,'Content-Type': 'application/json'}
+    
+    # Отправляем запрос POST с данными и заголовком
+    response = requests.post('http://lkjhytre.pythonanywhere.com/dock', json=data, headers=headers)
+    
+    # Возвращаем статус-код ответа
+    return response
+
+
 user = {'email': 'Josh123@gmial.com', 'password': '2533gggg', 'type': 'person'}
 print(auth_user(user))
 
@@ -49,3 +79,6 @@ token = response.get('token')
 
 user = get_user(token)
 print(user)
+
+dock = send_document_api('111.xlsx', token)
+print(dock)
