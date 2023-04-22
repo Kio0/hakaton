@@ -162,6 +162,14 @@ def service_request():
     return jsonify({'services': services})
 
 
+@app.after_request()
+def service_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
+
 if __name__ == '__main__':
     # запускаем сервер
-    app.run(port=5000)
+    app.run()
