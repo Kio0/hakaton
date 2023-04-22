@@ -204,9 +204,9 @@ def get_token(email, password):
         raise exceptions.UserNotFoundError('User not found')
 
     # Получаем соль, хэш и токен пользователя
-    salt = user[3]
-    hashed_password = user[2]
-    token = user[4]
+    salt = user[5]
+    hashed_password = user[4]
+    token = user[6]
 
     # Хэшируем введенный пароль с использованием соли
     hashed_input_password = hash_password(password, salt)
