@@ -165,46 +165,6 @@ def service_request():
     return jsonify({'services': services})
 
 
-@app.before_request
-def get_data():
-    # проверяем, что запрос имеет формат json
-    if request.headers['Content-Type'] == 'application/json':
-        # получаем токен из заголовков
-        token = request.headers.get('token')
-        # Проверяем токен
-        if not auth.test_correct(token):
-            return jsonify({'error': 'invalid token'})
-
-        # Получаем название таблицы из запроса
-        table_name = request.headers.get()
-
-        # Проверяем наличие таблицы в базе данных
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,))
-        result = cursor.fetchone()
-        if result is None:
-            return jsonify({'error': 'no table'})
-
-        # Получаем ID документа из запроса
-        data = request.get_json()
-        doc_id = data.get('id')
-        if not doc_id:
-            return jsonify({'error': 'no id'})
-
-        # Выполняем запрос к базе данных
-        cursor.execute("SELECT * FROM {} WHERE id=?".format(table_name), (doc_id,))
-        result = cursor.fetchone()
-
-        # Формируем и возвращаем ответ в формате JSON
-        if result:
-            return jsonify({'result': result})
-        else:
-            return jsonify({'error': 'no data'})
-    else:
-        return jsonify({'error': 'invalid request format'})
-
-
 @app.route('/services_map', methods=['GET'])
 def service_map_request():
     # получаем токен из заголовков
@@ -216,6 +176,28 @@ def service_map_request():
     services = auth.get_services_map()
     # возвращаем результат в формате json
     return jsonify({'services': services})
+
+
+@app.route('/<str:table>', methods=['GET'])
+def service_map_request(table):
+    # получаем токен из заголовков
+    token = request.headers.get('token')
+    # Проверяем токен
+    if not auth.test_correct(token):
+        return jsonify({'error': 'invalid token'})
+
+    conn = sqlite3.connect('mydatabase.db')
+    cursor = conn.cursor()
+
+    # получаем данные из запроса в формате json
+    data = request.json
+    # проверяем данные
+    id = data.get('id')
+    # Проверка наличия пользователя в базе данных
+    cursor.execute(f'''SELECT * FROM {table} WHERE id = ?''', (id,))
+    data = cursor.fetchone()
+    # возвращаем результат в формате json
+    return jsonify({'data': data})
 
 
 if __name__ == '__main__':
