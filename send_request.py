@@ -96,7 +96,7 @@ def get_services(token):
     return response.json()
 
 
-user = {'email': 'Josh123@gmial.com', 'password': '2533gggg', 'type': 'person'}
+user = {'email': 'Josh123@gmial.com', 'password': '2533gggg', 'name': 'Josh', 'description': '123', 'type': 'person'}
 print(auth_user(user))
 
 user.pop('type')

@@ -21,7 +21,7 @@ def auth_request():
             # добавляем пользователя в базу данных
             try:
                 auth.add_user_to_database(
-                    data['email'], data['password'], data['type']
+                    data['email'], data['name'], data['description'], data['password'], data['type']
                 )
             except exceptions.UserExistsError:
                 return jsonify({'error': 'user already exists'})
@@ -73,10 +73,10 @@ def user_update_request():
         # получаем данные из запроса в формате json
         data = request.json
         # проверяем данные
-        if 'id' in data and 'email' in data and 'services' in data:
+        if 'id' in data and 'services' in data and 'name' in data and 'description' in data:
             try:
                 # Обновляем пользователя
-                auth.update_user(data['id'], data['email'], data['services'])
+                auth.update_user(data['id'], data['name'], data['description'], data['services'])
                 # возвращаем результат в формате json
                 return jsonify({'response': 'user successfully updated'})
             # если пользователь не найден, возвращаем ошибку

@@ -18,8 +18,10 @@ def gen_table():
 
     cursor.execute(
         '''CREATE TABLE if NOT EXISTS users (
-            id INTEGER PRIMARY KEY,  
+            id INTEGER PRIMARY KEY,
             email TEXT,
+            name TEXT,
+            description TEXT,
             password TEXT,
             salt TEXT,
             token TEXT,
@@ -107,7 +109,7 @@ def hash_password(password, salt=None):
     return hash_result, salt_hex
 
 
-def add_user_to_database(email, password, user_type):
+def add_user_to_database(email, name, description, password, user_type):
     # Подключение к базе данных
     conn = sqlite3.connect('mydatabase.db')
     cursor = conn.cursor()
@@ -125,15 +127,15 @@ def add_user_to_database(email, password, user_type):
 
     # Вставка нового пользователя в таблицу "users"
     registration_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute('''INSERT INTO users(email, password, salt, token, registration_date, type)
-                      VALUES(?,?,?,?,?,?)''', (email, password, salt, token, registration_date, user_type))
+    cursor.execute('''INSERT INTO users(email, name, description password, salt, token, registration_date, type)
+                      VALUES(?,?,?,?,?,?)''', (email, name, description, password, salt, token, registration_date, user_type))
 
     # Сохранение изменений и закрытие базы данных
     conn.commit()
     conn.close()
 
 
-def update_user(id, email, services):
+def update_user(id, name, description, services):
     # Соединяемся с базой данных
     conn = sqlite3.connect('mydatabase.db')
     c = conn.cursor()
@@ -149,8 +151,8 @@ def update_user(id, email, services):
 
     c.execute(
         '''UPDATE users 
-        SET email=?
-        WHERE id=?''', (email, id)
+        SET name=?, description=?
+        WHERE id=?''', (name, description, id)
     )
 
     c.execute("SELECT service_id FROM user_services WHERE user_id=?", (id,))
@@ -259,11 +261,11 @@ def get_user_data(token):
     user_data = {
         'id': result[0],
         'email': result[1],
-        # 'password': result[2],
-        # 'salt': result[3],
-        'token': result[4],
-        'registration_date': str(result[5]),
-        'type': result[6]
+        'name': result[2],
+        'description': result[3],
+        'token': result[6],
+        'registration_date': str(result[7]),
+        'type': result[8]
     }
 
     return user_data
