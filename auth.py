@@ -283,6 +283,18 @@ def get_services():
     return services
 
 
+def get_services_map():
+    # устанавливаем соединение с базой данных
+    conn = sqlite3.connect('mydatabase.db')
+    cursor = conn.cursor()
+
+    # выполняем запрос на выборку данных
+    cursor.execute("SELECT id, name FROM services")
+    services = {'services': {data[0]: data[1] for data in cursor.fetchall()}}
+
+    return services
+
+
 if __name__ == '__main__':
     if not (os.path.isfile('database.db')):
         gen_table()

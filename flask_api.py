@@ -164,6 +164,19 @@ def service_request():
     return jsonify({'services': services})
 
 
+@app.route('/services_map', methods=['GET'])
+def service_request():
+    # получаем токен из заголовков
+    token = request.headers.get('token')
+    # Проверяем токен
+    if not auth.test_correct(token):
+        return jsonify({'error': 'invalid token'})
+
+    services = auth.get_services_map()
+    # возвращаем результат в формате json
+    return jsonify({'services': services})
+
+
 if __name__ == '__main__':
     # запускаем сервер
     app.run()
