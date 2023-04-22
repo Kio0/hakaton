@@ -2,10 +2,12 @@ import auth
 import documents
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 import exceptions
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/auth', methods=['POST'])
