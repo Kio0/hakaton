@@ -96,7 +96,7 @@ def hash_password(password, salt=None):
     salt = os.urandom(8)
 
     # Конвертируем соль в шестнадцатеричную строку
-    salt_hex = binascii.hexlify(salt).decode('utf-8')[:6]
+    salt_hex = binascii.hexlify(salt).decode('utf-8')
 
     # Конвертируем пароль и соль в байты
     password_bytes = password.encode('utf-8')
