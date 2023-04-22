@@ -177,10 +177,10 @@ def update_user(id, email, services):
 
         service_ids.append(service_id)
 
+    brackets = ', '.join([f"(?,{id})"] * len(service_ids))
     c.execute(
         f'''INSERT INTO user_services
-        VALUES
-            {', '.join([f"(?,{id})"] * len(service_ids))};''', service_ids
+        VALUES {brackets};''', service_ids
     )
     # Сохранение изменений и закрытие базы данных
     conn.commit()
