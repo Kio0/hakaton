@@ -158,7 +158,7 @@ def update_user(id, email, services):
         raise UserNotFoundError('User not found')
 
     c.execute(
-        '''UPDATE table 
+        '''UPDATE users 
         SET email=?
         WHERE id=?''', (email, id)
     )
