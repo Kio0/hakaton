@@ -167,21 +167,34 @@ def update_user(id, email, services):
         WHERE id=?''', (email, id)
     )
 
+    c.execute("SELECT service_id FROM user_services WHERE user_id=?", (id,))
+    exists_service_ids = [data[0] for data in c.fetchall()]
+
     service_ids = []
     for service in services:
         c.execute("SELECT id FROM services WHERE name=?", (service,))
-        service_id = c.fetchone()
+        service_id = c.fetchone()[0]
 
         if service_id is None:
             raise ServiceNotFoundError('Service not found')
 
         service_ids.append(service_id)
 
-    brackets = ', '.join([f"(?,{id})"] * len(service_ids))
-    c.execute(
-        f'''INSERT INTO user_services
-        VALUES {brackets};''', service_ids
-    )
+    old_service_ids = list(set(exists_service_ids) - set(service_ids))
+    service_ids = list(set(service_ids) - set(exists_service_ids))
+    print(exists_service_ids, service_ids, old_service_ids)
+    for service_id in old_service_ids:
+        c.execute(
+            f'''DELETE FROM user_services
+            WHERE user_id=? AND service_id=?;''', (id, service_id)
+        )
+
+    if service_ids:
+        brackets = ', '.join([f"({id}, ?)"] * len(service_ids))
+        c.execute(
+            f'''INSERT INTO user_services
+            VALUES {brackets};''', service_ids
+        )
     # Сохранение изменений и закрытие базы данных
     conn.commit()
     conn.close()
