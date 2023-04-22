@@ -122,8 +122,8 @@ def send_dock():
 
 
 @app.route('/get_dock', methods=['POST'])
-def get_dock(ID): #возвращает документ из памяти по его ID
-    print(ID)
+def get_dock(): #возвращает документ из памяти по его ID
+    #print(ID)
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
 

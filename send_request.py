@@ -98,7 +98,7 @@ print(user)
 dock = send_document_api('test_dock.xlsx', token)
 print(dock)
 
-dock = get_document_api(7, token)
+dock = get_document_api(3, token)
 print(dock)
 
 
