@@ -127,7 +127,7 @@ def add_user_to_database(email, name, description, password, user_type):
 
     # Вставка нового пользователя в таблицу "users"
     registration_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute('''INSERT INTO users(email, name, description password, salt, token, registration_date, type)
+    cursor.execute('''INSERT INTO users(email, name, description, password, salt, token, registration_date, type)
                       VALUES(?,?,?,?,?,?)''', (email, name, description, password, salt, token, registration_date, user_type))
 
     # Сохранение изменений и закрытие базы данных
