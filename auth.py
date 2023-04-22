@@ -161,7 +161,7 @@ def update_user(id, name, description, services):
 
     service_ids = []
     for service in services:
-        c.execute("SELECT id FROM services WHERE name=?", (service,))
+        c.execute("SELECT id FROM services WHERE id=?", (service,))
         service_id = c.fetchone()[0]
 
         if service_id is None:
