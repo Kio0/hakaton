@@ -12,7 +12,6 @@ CORS(app)
 
 
 @app.route('/auth', methods=['POST'])
-@api.doc()
 def auth_request():
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
