@@ -3,6 +3,8 @@ import documents
 
 from flask import Flask, request, jsonify
 
+import exceptions
+
 app = Flask(__name__)
 
 
@@ -19,7 +21,7 @@ def auth_request():
                 auth.add_user_to_database(
                     data['email'], data['password'], data['type']
                 )
-            except auth.UserExistsError:
+            except exceptions.UserExistsError:
                 return jsonify({'error': 'user already exists'})
             # возвращаем результат в формате json
             return jsonify({'response': 'user successfully registered'})
@@ -40,10 +42,10 @@ def login_request():
         try:
             token = auth.get_token(params['email'], params['password'])
         # если пользователь не найден, возвращаем ошибку
-        except auth.UserNotFoundError:
+        except exceptions.UserNotFoundError:
             return jsonify({'error': 'user not found'})
         # если пароль неверный, возвращаем ошибку
-        except auth.WrongPasswordError:
+        except exceptions.WrongPasswordError:
             return jsonify({'error': 'wrong password'})
         # возвращаем результат в формате json
         return jsonify({'token': token})
@@ -76,9 +78,9 @@ def user_update_request():
                 # возвращаем результат в формате json
                 return jsonify({'response': 'user successfully updated'})
             # если пользователь не найден, возвращаем ошибку
-            except auth.UserNotFoundError:
+            except exceptions.UserNotFoundError:
                 return jsonify({'error': 'user not found'})
-            except auth.ServiceNotFoundError:
+            except exceptions.ServiceNotFoundError:
                 return jsonify({'error': 'service not found'})
         # если в запросе присутствуют не все данные, возвращаем ошибку
         return jsonify({'error': 'invalid data'})
@@ -116,7 +118,7 @@ def send_dock():
 
         documents.save_file(filename, base64, sender_id, recipient_id)
 
-    return jsonify({'request': 'sucsesful'})
+    return jsonify({'request': 'successful'})
 
 
 if __name__ == '__main__':

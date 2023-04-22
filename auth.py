@@ -6,21 +6,7 @@ import random
 import string
 import binascii
 
-
-class UserExistsError(Exception):
-    pass
-
-
-class UserNotFoundError(Exception):
-    pass
-
-
-class WrongPasswordError(Exception):
-    pass
-
-
-class ServiceNotFoundError(Exception):
-    pass
+import exceptions
 
 
 def gen_table():
@@ -131,7 +117,7 @@ def add_user_to_database(email, password, user_type):
     user = cursor.fetchone()
     if user:
         conn.close()
-        raise UserExistsError("Пользователь с заданной почтой уже существует")
+        raise exceptions.UserExistsError("Пользователь с заданной почтой уже существует")
 
     # Хэширование пароля и генерация токена
     password, salt = hash_password(password)
@@ -159,7 +145,7 @@ def update_user(id, email, services):
     # Если пользователь не найден, вызываем ошибку
     if user is None:
         conn.close()
-        raise UserNotFoundError('User not found')
+        raise exceptions.UserNotFoundError('User not found')
 
     c.execute(
         '''UPDATE users 
@@ -176,7 +162,7 @@ def update_user(id, email, services):
         service_id = c.fetchone()[0]
 
         if service_id is None:
-            raise ServiceNotFoundError('Service not found')
+            raise exceptions.ServiceNotFoundError('Service not found')
 
         service_ids.append(service_id)
 
@@ -213,7 +199,7 @@ def get_token(email, password):
     # Если пользователь не найден, вызываем ошибку
     if user is None:
         conn.close()
-        raise UserNotFoundError('User not found')
+        raise exceptions.UserNotFoundError('User not found')
 
     # Получаем соль, хэш и токен пользователя
     salt = user[3]
@@ -226,7 +212,7 @@ def get_token(email, password):
     # Если хэшированный пароль не соответствует сохраненному, вызываем ошибку
     if hashed_input_password != hashed_password:
         conn.close()
-        raise WrongPasswordError('Wrong password')
+        raise exceptions.WrongPasswordError('Wrong password')
 
     return token
 
