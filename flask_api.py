@@ -3,7 +3,6 @@ import documents
 
 from flask import Flask, request, jsonify
 
-
 app = Flask(__name__)
 
 
@@ -92,34 +91,32 @@ def user_update_request():
 def send_dock():
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
-        
+
         # получаем токен из заголовков
         token = request.headers.get('token')
         # Проверяем токен
         if not auth.test_correct(token):
             return jsonify({'error': 'invalid token'})
-        
+
         # получаем данные из запроса в формате json
         data = request.json
         # проверяем данные
-        filename=data.get('filename')
-        recipient_id=data.get('recipient_id')
-        sender_id=data.get('sender_id')
-        base64=data.get('base64')
+        filename = data.get('filename')
+        recipient_id = data.get('recipient_id')
+        sender_id = data.get('sender_id')
+        base64 = data.get('base64')
         if base64 is None:
             return jsonify({'response': 'not documents'})
-        if sender_id is =None:
+        if sender_id is None:
             return jsonify({'response': 'not sender_id'})
         if recipient_id is None:
             return jsonify({'response': 'not recipient_id'})
         if filename is None:
             return jsonify({'response': 'not filename'})
 
-        documents.save_file(filename,base64,sender_id,recipient_id)  
+        documents.save_file(filename, base64, sender_id, recipient_id)
 
-    return jsonify({'request': 'sucsesful'})       
-
-
+    return jsonify({'request': 'sucsesful'})
 
 
 if __name__ == '__main__':
