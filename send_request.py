@@ -107,7 +107,7 @@ def update_user(user):
     return response.json()
 
 
-user = {'email': 'Josh1234@gmial.com', 'password': '2533gggg', 'name': 'Josh', 'description': '123', 'type': 'person'}
+user = {'email': 'Josh12345@gmial.com', 'password': '2533gggg', 'type': 'person'}
 print(auth_user(user))
 
 user = {'email': 'Josh1234@gmial.com', 'password': '2533gggg'}

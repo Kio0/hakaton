@@ -26,7 +26,7 @@ def auth_request():
             except exceptions.UserExistsError:
                 return jsonify({'error': 'user already exists'})
             # возвращаем результат в формате json
-            return jsonify({'response': 'user successfully registered'})
+            return jsonify({'token': auth.get_token(data['email'], data['password'])})
         # если в запросе присутствуют не все данные, возвращаем ошибку
         return jsonify({'error': 'invalid data'})
     else:
