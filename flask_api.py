@@ -146,7 +146,7 @@ def get_dock(ID): #возвращает документ из памяти по 
         except:
             return jsonify({'error': 'invalid data'})
 
-    return jsonify({'base64': base64})
+    return jsonify({'base64': base64}) 
 
 
 
