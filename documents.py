@@ -2,6 +2,7 @@ import sqlite3
 import os
 import io
 import base64
+import hashlib
 
 def save_file(filename, file_data, sender_id=-1, recipient_id=-1):
     # Проверяем, что папка documents существует. Если нет, то создаем ее

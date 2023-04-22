@@ -3,6 +3,7 @@ import json
 import os
 import base64
 
+
 def auth_user(user):
     # конвертируем данные в формат json
     json_data = json.dumps(user)
@@ -66,7 +67,7 @@ def send_document_api(filename, token, recipient_id=-1, sender_id=-1):
     response = requests.post('http://lkjhytre.pythonanywhere.com/dock', json=data, headers=headers)
     
     # Возвращаем статус-код ответа
-    return response.json()
+    return response#.json()
 
 
 user = {'email': 'Josh123@gmial.com', 'password': '2533gggg', 'type': 'person'}
