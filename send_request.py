@@ -99,7 +99,7 @@ dock = send_document_api('test_dock.xlsx', token)
 print(dock)
 
 dock = get_document_api(3, token)
-print(dock)
+print(dock.json())
 
 
 
