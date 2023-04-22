@@ -8,47 +8,47 @@ app = Flask(__name__)
 
 @app.route('/auth', methods=['POST'])
 def auth_request():
-    # получаем данные из запроса в формате json
-    params = request.args.to_dict()
-    # проверяем данные
-    if 'email' in params and 'password' in params and 'type' in params:
-        # добавляем пользователя в базу данных
-        try:
-            auth.add_user_to_database(
-                params['email'], params['password'], params['type']
-            )
-        except auth.UserExistsError:
-            return jsonify({'error': 'user already exists'})
-        # возвращаем результат в формате json
-        return jsonify({'response': 'user successfully registered'})
-    # если в запросе присутствуют не все данные, возвращаем ошибку
-    return jsonify({'error': 'invalid data'})
-
-
-@app.route('/login', methods=['GET'])
-def login_request():
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
         # получаем данные из запроса в формате json
         data = request.json
         # проверяем данные
-        if 'email' in data and 'password' in data:
+        if 'email' in data and 'password' in data and 'type' in data:
             # добавляем пользователя в базу данных
             try:
-                token = auth.get_token(data['email'], data['password'])
-            # если пользователь не найден, возвращаем ошибку
-            except auth.UserNotFoundError:
-                return jsonify({'error': 'user not found'})
-            # если пароль неверный, возвращаем ошибку
-            except auth.WrongPasswordError:
-                return jsonify({'error': 'wrong password'})
+                auth.add_user_to_database(
+                    data['email'], data['password'], data['type']
+                )
+            except auth.UserExistsError:
+                return jsonify({'error': 'user already exists'})
             # возвращаем результат в формате json
-            return jsonify({'token': token})
+            return jsonify({'response': 'user successfully registered'})
         # если в запросе присутствуют не все данные, возвращаем ошибку
         return jsonify({'error': 'invalid data'})
     else:
         # если запрос не имеет формат json, возвращаем ошибку
         return jsonify({'error': 'invalid request format'})
+
+
+@app.route('/login', methods=['GET'])
+def login_request():
+    # получаем параметры из запроса
+    params = request.args.to_dict()
+    # проверяем данные
+    if 'email' in params and 'password' in params:
+        # добавляем пользователя в базу данных
+        try:
+            token = auth.get_token(params['email'], params['password'])
+        # если пользователь не найден, возвращаем ошибку
+        except auth.UserNotFoundError:
+            return jsonify({'error': 'user not found'})
+        # если пароль неверный, возвращаем ошибку
+        except auth.WrongPasswordError:
+            return jsonify({'error': 'wrong password'})
+        # возвращаем результат в формате json
+        return jsonify({'token': token})
+    # если в запросе присутствуют не все данные, возвращаем ошибку
+    return jsonify({'error': 'invalid data'})
 
 
 @app.route('/user', methods=['GET'])
