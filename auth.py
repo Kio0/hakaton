@@ -258,7 +258,7 @@ def get_user_data(token):
     id = cursor.fetchone()[0]
 
     cursor.execute("SELECT service_id FROM user_services WHERE user_id=?", (id,))
-    service_ids = [data[0] for data in cursor.fetchall()]
+    service_ids = [int(data[0]) for data in cursor.fetchall()]
     service_names = []
     for service_id in service_ids:
         cursor.execute("SELECT name FROM services WHERE id=?", (service_id,))
