@@ -90,7 +90,6 @@ def user_update_request():
 
 @app.route('/dock', methods=['POST'])
 def send_dock():
-    print(1)
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
         
@@ -117,7 +116,8 @@ def send_dock():
             return jsonify({'response': 'not filename'})
 
         documents.save_file(filename,base64,sender_id,recipient_id)  
-        
+
+    return jsonify({'request': 'sucsesful'})       
 
 
 
