@@ -121,6 +121,33 @@ def send_dock():
     return jsonify({'request': 'successful'})
 
 
+@app.route('/get_dock', methods=['POST'])
+def get_dock(ID): #возвращает документ из памяти по его ID
+    # проверяем, что запрос имеет формат json
+    if request.headers['Content-Type'] == 'application/json':
+
+        # получаем токен из заголовков
+        token = request.headers.get('token')
+        # Проверяем токен
+        if not auth.test_correct(token):
+            return jsonify({'error': 'invalid token'})
+
+        # получаем данные из запроса в формате json
+        data = request.json
+        # проверяем данные
+        file_id = data.get('id')
+        if file_id is None:
+            return jsonify({'response': 'not id'})
+        try:
+            base64=documents.get_file(file_id)
+        except:
+            return jsonify({'error': 'invalid data'})
+
+    return jsonify({'base64': base64})
+
+
+
+
 if __name__ == '__main__':
     # запускаем сервер
     app.run()

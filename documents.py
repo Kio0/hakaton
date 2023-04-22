@@ -78,4 +78,56 @@ def read_file_base64(filename, sender_id=-1, recipient_id=-1):
 
     save_file(filename, file_data_base64, sender_id, recipient_id)
 
-# read_file_base64('6.  заявка на г-образные опоры.xlsx')
+
+#Возвращает файл
+
+def get_file(file):
+    conn = sqlite3.connect('mydatabase.db')
+    c = conn.cursor()
+    # Определяем тип входных данных
+    if isinstance(file, int):
+        # Если входной параметр является числом, то это и есть ID файла
+        file_id = file
+        c.execute("SELECT name FROM documents WHERE id=?", (file_id,))
+        filename = c.fetchone()[0]
+    elif isinstance(file, str):
+        # Если входной параметр является строкой, то определяем, является ли он HEX-кодом
+        try:
+            file_id = int(file, 16)
+            c.execute("SELECT name FROM documents WHERE id=?", (file_id,))
+            filename = c.fetchone()[0]
+        except ValueError:
+            # Если не является HEX-кодом, то это и есть название файла
+
+            c.execute("SELECT id, name FROM documents WHERE name=?", (file,))
+            result = c.fetchone()
+            if not result:
+                # Если файл с таким именем не найден, бросаем исключение
+                raise ValueError(f"Файл с именем {file} не найден")
+            file_id, filename = result
+        else:
+            # Если является HEX-кодом, то ищем файл с таким ID в базе данных
+            conn = sqlite3.connect('mydatabase.db')
+            c = conn.cursor()
+            c.execute("SELECT name FROM documents WHERE id=?", (file_id,))
+            result = c.fetchone()
+            if not result:
+                # Если файл с таким ID не найден, бросаем исключение
+                raise ValueError(f"Файл с ID {file} не найден")
+            filename = result[0]    
+    else:
+        raise ValueError("Некорректный тип входных данных")
+    
+    # Считываем файл из папки documents
+    with open(os.path.join('documents', f"{file_id}_{filename}"), 'rb') as f:
+        file_data = f.read()
+    conn.close()
+    # Перекодируем файл в base64 и возвращаем результат
+    return base64.b64encode(file_data).decode('utf-8')
+
+#print(get_file('11331'))
+
+
+
+
+#read_file_base64('11331.xlsx')
