@@ -12,10 +12,6 @@ def save_file(filename, file_data, sender_id=-1, recipient_id=-1):
     if isinstance(file_data, str):
         file_data = base64.b64decode(file_data)
     
-    # Сохраняем файл в папке documents
-    with io.open(os.path.join('documents', filename), 'wb') as f:
-        f.write(file_data)
-    
     # Добавляем запись в таблицу documents базы данных
     conn = sqlite3.connect('mydatabase.db')
     c = conn.cursor()
@@ -26,19 +22,29 @@ def save_file(filename, file_data, sender_id=-1, recipient_id=-1):
                   name TEXT NOT NULL, 
                   size INTEGER NOT NULL,
                   sender_id INTEGER NOT NULL,
-                  recipient_id INTEGER NOT NULL)''')
+                  recipient_id INTEGER NOT NULL,
+                  md5 TEXT NOT NULL)''')
     
     # Вычисляем размер файла в байтах
     size = len(file_data)
     
-    # Вставляем запись в таблицу
-    c.execute("INSERT INTO documents (name, size, sender_id, recipient_id) VALUES (?, ?, ?, ?)", (filename, size, sender_id, recipient_id))
+    # Вычисляем md5 хэш от файла
+    md5 = hashlib.md5(file_data).hexdigest()
     
-    # Сохраняем изменения
+    # Вставляем запись в таблицу и получаем ее ID
+    c.execute("INSERT INTO documents (name, size, sender_id, recipient_id, md5) VALUES (?, ?, ?, ?, ?)", (filename, size, sender_id, recipient_id, md5))
+    file_id = c.lastrowid
+    
+    # Сохраняем файл в папке documents
+    with io.open(os.path.join('documents', f'{file_id}_{filename}'), 'wb') as f:
+        f.write(file_data)
+    
+    # Сохраняем изменения в базе данных
     conn.commit()
     
     # Закрываем соединение с базой данных
     conn.close()
+
 
 
 
