@@ -26,15 +26,15 @@ def gen_table():
     # Создание курсора для работы с базой данных
     cursor = conn.cursor()
 
-    # Создание таблицы "contractors"
     cursor.execute(
-        '''CREATE TABLE if NOT EXISTS contractors (
+        '''CREATE TABLE if NOT EXISTS users (
             id INTEGER PRIMARY KEY,
-            name TEXT,
-            website TEXT,
-            password TEXT,
             email TEXT,
-            phone TEXT
+            password TEXT,
+            salt TEXT,
+            token TEXT,
+            registration_date DATE,
+            type TEXT
         )'''
     )
 
@@ -47,70 +47,16 @@ def gen_table():
         )'''
     )
 
-    # Создание таблицы "materials"
+    # Создание таблицы "user_services"
     cursor.execute(
-        '''CREATE TABLE if NOT EXISTS materials (
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            description TEXT
-        )'''
-    )
-
-    # Создание таблицы "contractor_services"
-    cursor.execute(
-        '''CREATE TABLE if NOT EXISTS contractor_services (
-            contractor_id INTEGER,
+        '''CREATE TABLE if NOT EXISTS user_services (
+            user_id INTEGER,
             service_id INTEGER,
-            FOREIGN KEY(contractor_id) REFERENCES contractors(id),
+            FOREIGN KEY(user_id) REFERENCES users(id),
             FOREIGN KEY(service_id) REFERENCES services(id),
-            PRIMARY KEY(contractor_id, service_id)
+            PRIMARY KEY(user_id, service_id)
         )'''
     )
-
-    # Создание таблицы "contractor_materials"
-    cursor.execute(
-        '''CREATE TABLE if NOT EXISTS contractor_materials (
-            contractor_id INTEGER,
-            material_id INTEGER,
-            FOREIGN KEY(contractor_id) REFERENCES contractors(id),
-            FOREIGN KEY(material_id) REFERENCES materials(id),
-            PRIMARY KEY(contractor_id, material_id)
-        )'''
-    )
-
-    cursor.execute(
-        '''CREATE TABLE if NOT EXISTS users (
-            id INTEGER PRIMARY KEY,
-            email TEXT,
-            password TEXT,
-            salt TEXT,
-            token TEXT,
-            registration_date DATE,
-            type TEXT
-        )'''
-    )
-    # Сохранение изменений и закрытие базы данных
-
-    # список с данными для заполнения таблицы "materials"
-    materials_data = [
-        ('Цемент', 'Строительный материал для кладки и штукатурки'),
-        ('Гипс', 'Материал для штукатурки и создания форм и моделей'),
-        ('Кирпич', 'Строительный материал для кладки стен и перегородок'),
-        ('Керамическая плитка', 'Материал для отделки стен и полов в помещении'),
-        ('Линолеум', 'Материал для покрытия полов в помещении'),
-        ('ДСП', 'Материал для изготовления мебели и отделки помещений'),
-        ('Стекло', 'Материал для оконных и дверных блоков, зеркал и стеклянной мебели'),
-        ('Ламинат', 'Материал для покрытия полов в помещении'),
-        ('Ковролин', 'Материал для покрытия полов в помещении'),
-        ('Гранитная плитка', 'Материал для отделки наружных и внутренних поверхностей')
-    ]
-
-    # добавление 10 строк в таблицу "materials"
-    for i in range(10):
-        material = materials_data[i]
-        name = material[0]
-        description = material[1]
-        cursor.execute("INSERT INTO materials (name, description) VALUES (?, ?)", (name, description))
 
     # список с данными для заполнения таблицы "services"
     services_data = [
