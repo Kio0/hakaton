@@ -290,7 +290,7 @@ def get_services_map():
 
     # выполняем запрос на выборку данных
     cursor.execute("SELECT id, name FROM services")
-    services = {'services': {data[0]: data[1] for data in cursor.fetchall()}}
+    services = {data[0]: data[1] for data in cursor.fetchall()}
 
     return services
 
