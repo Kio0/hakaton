@@ -4,14 +4,20 @@ import documents
 import sqlite3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_restplus import Api, Resource, fields
 
 import exceptions
 
 app = Flask(__name__)
+api = Api(
+    app, version='1.0', title='Sample API',
+    description='A sample API',
+)
 CORS(app)
 
 
 @app.route('/auth', methods=['POST'])
+@api.doc()
 def auth_request():
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
