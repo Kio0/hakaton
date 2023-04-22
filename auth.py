@@ -163,8 +163,9 @@ def update_user(id, email, services):
         WHERE id=?''', (email, id)
     )
 
-
-
+    # Сохранение изменений и закрытие базы данных
+    conn.commit()
+    conn.close()
 
 
 # Функция для получения токена
