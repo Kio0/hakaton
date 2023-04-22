@@ -67,7 +67,7 @@ def send_document_api(filename, token, recipient_id=-1, sender_id=-1):
     response = requests.post('http://lkjhytre.pythonanywhere.com/dock', json=data, headers=headers)
     
     # Возвращаем статус-код ответа
-    return response#.json()
+    return response.json()
 
 
 user = {'email': 'Josh123@gmial.com', 'password': '2533gggg', 'type': 'person'}

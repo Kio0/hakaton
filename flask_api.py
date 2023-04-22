@@ -106,13 +106,13 @@ def send_dock():
         recipient_id=data.get('recipient_id')
         sender_id=data.get('sender_id')
         base64=data.get('base64')
-        if base64==None:
+        if base64 is None:
             return jsonify({'response': 'not documents'})
-        if sender_id==None:
+        if sender_id is =None:
             return jsonify({'response': 'not sender_id'})
-        if recipient_id==None:
+        if recipient_id is None:
             return jsonify({'response': 'not recipient_id'})
-        if filename==None:
+        if filename is None:
             return jsonify({'response': 'not filename'})
 
         documents.save_file(filename,base64,sender_id,recipient_id)  
