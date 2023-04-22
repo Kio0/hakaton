@@ -93,7 +93,7 @@ print(response)
 token = response.get('token')
 
 user = get_user(token)
-print(user)
+print(user) 
 
 dock = send_document_api('test_dock.xlsx', token)
 print(dock)

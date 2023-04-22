@@ -18,7 +18,7 @@ def gen_table():
 
     cursor.execute(
         '''CREATE TABLE if NOT EXISTS users (
-            id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY,  
             email TEXT,
             password TEXT,
             salt TEXT,
