@@ -257,7 +257,16 @@ def get_user_data(token):
     # если результат запроса равен None, то возвращаем None
     if result is None:
         return None
+    cursor.execute("SELECT id FROM users WHERE token=?", (token,))
+    id = cursor.fetchone()[0]
 
+    cursor.execute("SELECT service_id FROM user_services WHERE user_id=?", (id,))
+    service_ids = [data[0] for data in cursor.fetchall()]
+    service_names = []
+    for service_id in service_ids:
+        cursor.execute("SELECT name FROM services WHERE id=?", (service_id,))
+        service_names.append(cursor.fetchone()[0])
+    services = {service_id: name for service_id, name in zip(service_ids, service_names)}
     # формируем словарь с данными о пользователе
     user_data = {
         'id': result[0],
@@ -266,7 +275,8 @@ def get_user_data(token):
         'description': result[3],
         'token': result[6],
         'registration_date': str(result[7]),
-        'type': result[8]
+        'type': result[8],
+        'services': services
     }
 
     return user_data
