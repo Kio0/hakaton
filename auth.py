@@ -7,6 +7,7 @@ import string
 import binascii
 
 import exceptions
+import base_dock
 
 
 def gen_table():
