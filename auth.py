@@ -180,7 +180,7 @@ def update_user(id, email, services):
     c.execute(
         f'''INSERT INTO user_services
         VALUES
-            {', '.join(f"(?,{id})"),};''', service_ids
+            {', '.join([f"(?,{id})"] * len(service_ids)),};''', service_ids
     )
     # Сохранение изменений и закрытие базы данных
     conn.commit()
