@@ -179,7 +179,7 @@ def service_map_request():
 
 
 @app.route('/<table>', methods=['GET'])
-def service_map_request(table):
+def table_request(table):
     # получаем токен из заголовков
     token = request.headers.get('token')
     # Проверяем токен
