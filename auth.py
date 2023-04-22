@@ -233,6 +233,10 @@ def get_token(email, password):
 
 def test_correct(token):  # True если токен корректный
     # устанавливаем соединение с базой данных
+    try:
+        int(token,16)
+    except ValueError:
+        return False
     conn = sqlite3.connect('mydatabase.db')
     cursor = conn.cursor()
 
@@ -280,3 +284,14 @@ def get_user_data(token):
 if __name__ == '__main__':
     if not (os.path.isfile('database.db')):
         gen_table()
+
+
+
+
+
+
+
+
+
+
+
