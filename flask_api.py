@@ -123,6 +123,7 @@ def send_dock():
 
 @app.route('/get_dock', methods=['POST'])
 def get_dock(ID): #возвращает документ из памяти по его ID
+    print(ID)
     # проверяем, что запрос имеет формат json
     if request.headers['Content-Type'] == 'application/json':
 
@@ -139,7 +140,9 @@ def get_dock(ID): #возвращает документ из памяти по 
         if file_id is None:
             return jsonify({'response': 'not id'})
         try:
+            print(1)
             base64=documents.get_file(file_id)
+            print(2)
         except:
             return jsonify({'error': 'invalid data'})
 

@@ -70,6 +70,20 @@ def send_document_api(filename, token, recipient_id=-1, sender_id=-1):
     return response.json()
 
 
+def get_document_api(ID,token):
+    # Формируем json-переменную с данными для отправки
+    data = {
+        'id': ID
+    }    
+    # Формируем заголовок с токеном
+    headers = {'token': token, 'Content-Type': 'application/json'}
+
+    # Отправляем запрос POST с данными и заголовком
+    response = requests.post('http://lkjhytre.pythonanywhere.com/get_dock', json=data, headers=headers)
+
+    # Возвращаем статус-код ответа
+    return response#.json()
+
 user = {'email': 'Josh123@gmial.com', 'password': '2533gggg', 'type': 'person'}
 print(auth_user(user))
 
@@ -81,5 +95,11 @@ token = response.get('token')
 user = get_user(token)
 print(user)
 
-dock = send_document_api('11331.xlsx', token)
+dock = send_document_api('test_dock.xlsx', token)
 print(dock)
+
+dock = get_document_api(7, token)
+print(dock)
+
+
+
