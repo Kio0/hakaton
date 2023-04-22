@@ -96,6 +96,17 @@ def get_services(token):
     return response.json()
 
 
+def get_services_map(token):
+    # Формируем заголовок с токеном
+    headers = {'token': token}
+
+    # Отправляем запрос POST с данными и заголовком
+    response = requests.get('http://lkjhytre.pythonanywhere.com/services_map', headers=headers)
+
+    # Возвращаем статус-код ответа
+    return response.json()
+
+
 def update_user(user):
     # Формируем заголовок с токеном
     headers = {'token': token, 'Content-Type': 'application/json'}
@@ -138,3 +149,6 @@ print(dock.json())
 
 services = get_services(token)
 print(services)
+
+services_map = get_services_map(token)
+print(services_map)

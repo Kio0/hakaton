@@ -165,7 +165,7 @@ def service_request():
 
 
 @app.route('/services_map', methods=['GET'])
-def service_request():
+def service_map_request():
     # получаем токен из заголовков
     token = request.headers.get('token')
     # Проверяем токен
