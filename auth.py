@@ -267,6 +267,18 @@ def get_user_data(token):
     return user_data
 
 
+def get_services():
+    # устанавливаем соединение с базой данных
+    conn = sqlite3.connect('mydatabase.db')
+    cursor = conn.cursor()
+
+    # выполняем запрос на выборку данных
+    cursor.execute("SELECT name FROM services")
+    services = [data[0] for data in cursor.fetchall()]
+
+    return services
+
+
 if __name__ == '__main__':
     if not (os.path.isfile('database.db')):
         gen_table()

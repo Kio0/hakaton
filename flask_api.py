@@ -149,8 +149,19 @@ def get_dock(): #возвращает документ из памяти по е
     return jsonify({'base64': base64}) 
 
 
+@app.route('/services', methods=['GET'])
+def service_request():
+    # получаем токен из заголовков
+    token = request.headers.get('token')
+    # Проверяем токен
+    if not auth.test_correct(token):
+        return jsonify({'error': 'invalid token'})
+
+    services = auth.get_services()
+    # возвращаем результат в формате json
+    return jsonify({'services': services})
 
 
 if __name__ == '__main__':
     # запускаем сервер
-    app.run()
+    app.run(port=5000)

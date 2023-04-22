@@ -84,6 +84,18 @@ def get_document_api(ID,token):
     # Возвращаем статус-код ответа
     return response#.json()
 
+
+def get_services(token):
+    # Формируем заголовок с токеном
+    headers = {'token': token}
+
+    # Отправляем запрос POST с данными и заголовком
+    response = requests.get('http://lkjhytre.pythonanywhere.com/services', headers=headers)
+
+    # Возвращаем статус-код ответа
+    return response.json()
+
+
 user = {'email': 'Josh123@gmial.com', 'password': '2533gggg', 'type': 'person'}
 print(auth_user(user))
 
@@ -93,7 +105,7 @@ print(response)
 token = response.get('token')
 
 user = get_user(token)
-print(user) 
+print(user)
 
 dock = send_document_api('test_dock.xlsx', token)
 print(dock)
@@ -101,5 +113,5 @@ print(dock)
 dock = get_document_api(3, token)
 print(dock.json())
 
-
-
+services = get_services(token)
+print(services)
