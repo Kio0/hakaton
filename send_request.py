@@ -3,8 +3,13 @@ import json
 
 
 def auth_user(user):
+    # конвертируем данные в формат json
+    json_data = json.dumps(user)
+
+    # устанавливаем заголовок Content-Type для отправки запроса в формате json
+    headers = {'Content-Type': 'application/json'}
     # отправляем POST-запрос на API сервер
-    response = requests.post(f'http://lkjhytre.pythonanywhere.com/auth', params=user)
+    response = requests.post(f'http://lkjhytre.pythonanywhere.com/auth', data=json_data, headers=headers)
 
     # получаем ответ в формате json
     result = response.json()
@@ -13,13 +18,8 @@ def auth_user(user):
 
 
 def get_token(user):
-    # конвертируем данные в формат json
-    json_data = json.dumps(user)
-
-    # устанавливаем заголовок Content-Type для отправки запроса в формате json
-    headers = {'Content-Type': 'application/json'}
     # отправляем POST-запрос на API сервер
-    response = requests.get(f'http://lkjhytre.pythonanywhere.com/login', data=json_data, headers=headers)
+    response = requests.get(f'http://lkjhytre.pythonanywhere.com/login', params=user)
 
     # получаем ответ в формате json
     result = response.json()
