@@ -263,7 +263,7 @@ def get_user_data(token):
     for service_id in service_ids:
         cursor.execute("SELECT name FROM services WHERE id=?", (service_id,))
         service_names.append(cursor.fetchone()[0])
-    services = {service_id: name for service_id, name in zip(service_ids, service_names)}
+    services = {int(service_id): name for service_id, name in zip(service_ids, service_names)}
     # формируем словарь с данными о пользователе
     user_data = {
         'id': result[0],
