@@ -78,6 +78,8 @@ def user_update_request():
             # если пользователь не найден, возвращаем ошибку
             except auth.UserNotFoundError:
                 return jsonify({'error': 'user not found'})
+            except auth.ServiceNotFoundError:
+                return jsonify({'error': 'service not found'})
         # если в запросе присутствуют не все данные, возвращаем ошибку
         return jsonify({'error': 'invalid data'})
     else:

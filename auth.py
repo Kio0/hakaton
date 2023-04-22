@@ -19,6 +19,10 @@ class WrongPasswordError(Exception):
     pass
 
 
+class ServiceNotFoundError(Exception):
+    pass
+
+
 def gen_table():
     # Подключение к базе данных
     conn = sqlite3.connect('mydatabase.db')
@@ -163,6 +167,21 @@ def update_user(id, email, services):
         WHERE id=?''', (email, id)
     )
 
+    service_ids = []
+    for service in services:
+        c.execute("SELECT id FROM services WHERE name=?", (service,))
+        service_id = c.fetchone()
+
+        if service_id is None:
+            raise ServiceNotFoundError('Service not found')
+
+        service_ids.append(service_id)
+
+    c.execute(
+        f'''INSERT INTO user_services
+        VALUES
+            {', '.join(f"(?,{id})"),};''', service_ids
+    )
     # Сохранение изменений и закрытие базы данных
     conn.commit()
     conn.close()
