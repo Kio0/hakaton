@@ -251,9 +251,6 @@ def get_user_data(token):
     cursor.execute("SELECT * FROM users WHERE token=?", (token,))
     result = cursor.fetchone()
 
-    # закрываем соединение с базой данных
-    conn.close()
-
     # если результат запроса равен None, то возвращаем None
     if result is None:
         return None
@@ -278,6 +275,9 @@ def get_user_data(token):
         'type': result[8],
         'services': services
     }
+
+    # закрываем соединение с базой данных
+    conn.close()
 
     return user_data
 
