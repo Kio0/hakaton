@@ -214,7 +214,7 @@ def sql_request():
     try:
         auth.post_sql(sql_code)
     except (sqlite3.OperationalError, ValueError) as error:
-        return jsonify({'error': error})
+        return jsonify({'error': str(error)})
     # возвращаем результат в формате json
     return jsonify({'response': 'success'})
 

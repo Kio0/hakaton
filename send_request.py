@@ -149,8 +149,8 @@ user = {
     "name": "1",
     "description": "111",
     "services": [
-      1,
-      2
+        1,
+        2
     ]
 }
 response = update_user(user)
@@ -168,5 +168,5 @@ print(services)
 services_map = get_services_map(token)
 print(services_map)
 
-sql = post_sql('SELECT * FROM users')
+sql = post_sql('SELECT * FROM userss')
 print(sql)
