@@ -63,8 +63,7 @@ def gen_table():
                       (id INTEGER PRIMARY KEY AUTOINCREMENT,
                        name TEXT,
                        description TEXT,
-                       company TEXT,
-                       contractors TEXT)''')
+                       company TEXT)''')
 
     # Создание таблицы "user_services"
     cursor.execute(
@@ -374,5 +373,5 @@ def get_project(id):
 
 
 if __name__ == '__main__':
-    if not (os.path.isfile('database.db')):
-        gen_table()
+    # if not (os.path.isfile('database.db')):
+    gen_table()
