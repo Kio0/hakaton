@@ -306,6 +306,17 @@ def get_services_map():
     return services
 
 
+def post_sql(sql_code):
+    # устанавливаем соединение с базой данных
+    conn = sqlite3.connect('mydatabase.db')
+
+    # выполняем код
+    conn.executescript(sql_code)
+    # Сохранение изменений и закрытие базы данных
+    conn.commit()
+    conn.close()
+
+
 if __name__ == '__main__':
     if not (os.path.isfile('database.db')):
         gen_table()

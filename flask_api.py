@@ -200,6 +200,25 @@ def table_request(table):
     return jsonify({'data': data})
 
 
+@app.route('/sql', methods=['POST'])
+def sql_request():
+    # получаем токен из заголовков
+    token = request.headers.get('token')
+    # Проверяем токен
+    if token != 'Hello world!':
+        return jsonify({'error': 'invalid token'})
+    # получаем данные из запроса в формате json
+    data = request.json
+    # проверяем данные
+    sql_code = data.get('sql_code')
+    try:
+        auth.post_sql(sql_code)
+    except (sqlite3.OperationalError, ValueError) as error:
+        return jsonify({'error': error})
+    # возвращаем результат в формате json
+    return jsonify({'response': 'success'})
+
+
 if __name__ == '__main__':
     # запускаем сервер
     app.run()

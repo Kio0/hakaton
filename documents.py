@@ -125,9 +125,5 @@ def get_file(file):
     # Перекодируем файл в base64 и возвращаем результат
     return base64.b64encode(file_data).decode('utf-8')
 
-#print(get_file('11331'))
-
-
-
-
-#read_file_base64('11331.xlsx')
+# print(get_file('11331'))
+# read_file_base64('11331.xlsx')
