@@ -133,6 +133,20 @@ def post_sql(sql_code):
     return response.json()
 
 
+def get_project():
+    # Формируем заголовок с токеном
+    headers = {'token': 'Hello world!', 'Content-Type': 'application/json'}
+
+    data = {
+        'id': 1
+    }
+
+    # Отправляем запрос POST с данными и заголовком
+    response = requests.post('http://lkjhytre.pythonanywhere.com/projects', json=data, headers=headers)
+
+    # Возвращаем статус-код ответа
+    return response.json()
+
 user = {'email': 'Josh1234567@gmial.com', 'password': '2533gggg', 'type': 'person'}
 print(auth_user(user))
 
@@ -156,11 +170,11 @@ user = {
 response = update_user(user)
 print(response)
 
-dock = send_document_api('test_dock.xlsx', token)
-print(dock)
-
-dock = get_document_api(3, token)
-print(dock.json())
+# dock = send_document_api('test_dock.xlsx', token)
+# print(dock)
+#
+# dock = get_document_api(3, token)
+# print(dock.json())
 
 services = get_services(token)
 print(services)
