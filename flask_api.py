@@ -219,6 +219,23 @@ def sql_request():
     return jsonify({'response': 'success'})
 
 
+@app.route('/projects', methods=['GET'])
+def project_request():
+    # получаем токен из заголовков
+    token = request.headers.get('token')
+    # Проверяем токен
+    if not auth.test_correct(token):
+        return jsonify({'error': 'invalid token'})
+
+    # получаем данные из запроса в формате json
+    data = request.json
+    # проверяем данные
+    id = data.get('id')
+    projects = auth.get_project(id)
+    # возвращаем результат в формате json
+    return jsonify({'services': projects})
+
+
 if __name__ == '__main__':
     # запускаем сервер
     app.run()

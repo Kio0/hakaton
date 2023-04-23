@@ -42,7 +42,7 @@ def gen_table():
 
     # Создание таблицы "user_services"
     cursor.execute(
-        '''CREATE TABLE if NOT EXISTS user_services (
+        '''CREATE TABLE IF NOT EXISTS user_services (
             user_id INTEGER,
             service_id INTEGER,
             FOREIGN KEY(user_id) REFERENCES users(id),
@@ -51,29 +51,66 @@ def gen_table():
         )'''
     )
 
-    # список с данными для заполнения таблицы "services"
-    services_data = [
-        ('Установка кондиционеров', 'Установка кондиционеров в жилых и офисных помещениях'),
-        ('Ремонт квартир', 'Комплексный ремонт квартир под ключ'),
-        ('Уборка квартир', 'Генеральная уборка квартир после ремонта или переезда'),
-        ('Дизайн интерьера', 'Разработка и реализация дизайн-проектов помещений'),
-        ('Монтаж натяжных потолков', 'Установка натяжных потолков в жилых и офисных помещениях'),
-        ('Мебель на заказ', 'Изготовление мебели на заказ по индивидуальным размерам и дизайну'),
-        ('Окна и двери', 'Установка пластиковых окон и дверей'),
-        ('Сантехнические работы', 'Установка и ремонт сантехнических систем'),
-        ('Электромонтажные работы', 'Монтаж и ремонт электропроводки в жилых и офисных помещениях'),
-        ('Отделочные работы', 'Отделка стен, полов, потолков и др.')
-    ]
+    # Создаем таблицу, если она не существует
+    cursor.execute('''CREATE TABLE IF NOT EXISTS documents 
+                  (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                  name TEXT NOT NULL, 
+                  size INTEGER NOT NULL,
+                  md5 TEXT NOT NULL)''')
 
-    # добавление 10 строк в таблицу "services"
-    for i in range(10):
-        service = services_data[i]
-        name = service[0]
-        description = service[1]
-        cursor.execute("INSERT INTO services (name, description) VALUES (?, ?)", (name, description))
+    # Создание таблицы "project"
+    cursor.execute('''CREATE TABLE IF NOT EXISTS projects
+                      (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       name TEXT,
+                       description TEXT,
+                       company TEXT,
+                       contractors TEXT)''')
 
-    conn.commit()
-    conn.close()
+    # Создание таблицы "user_services"
+    cursor.execute(
+        '''CREATE TABLE IF NOT EXISTS project_users (
+            project_id INTEGER,
+            user_id INTEGER,
+            FOREIGN KEY(project_id) REFERENCES projects(id),
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            PRIMARY KEY(project_id, user_id)
+        )'''
+    )
+
+    # Создание таблицы "user_services"
+    cursor.execute(
+        '''CREATE TABLE IF NOT EXISTS project_documents (
+            project_id INTEGER,
+            document_id INTEGER,
+            FOREIGN KEY(project_id) REFERENCES projects(id),
+            FOREIGN KEY(document_id) REFERENCES documents(id),
+            PRIMARY KEY(project_id, document_id)
+        )'''
+    )
+
+    # # список с данными для заполнения таблицы "services"
+    # services_data = [
+    #     ('Установка кондиционеров', 'Установка кондиционеров в жилых и офисных помещениях'),
+    #     ('Ремонт квартир', 'Комплексный ремонт квартир под ключ'),
+    #     ('Уборка квартир', 'Генеральная уборка квартир после ремонта или переезда'),
+    #     ('Дизайн интерьера', 'Разработка и реализация дизайн-проектов помещений'),
+    #     ('Монтаж натяжных потолков', 'Установка натяжных потолков в жилых и офисных помещениях'),
+    #     ('Мебель на заказ', 'Изготовление мебели на заказ по индивидуальным размерам и дизайну'),
+    #     ('Окна и двери', 'Установка пластиковых окон и дверей'),
+    #     ('Сантехнические работы', 'Установка и ремонт сантехнических систем'),
+    #     ('Электромонтажные работы', 'Монтаж и ремонт электропроводки в жилых и офисных помещениях'),
+    #     ('Отделочные работы', 'Отделка стен, полов, потолков и др.')
+    # ]
+    #
+    # # добавление 10 строк в таблицу "services"
+    # for i in range(10):
+    #     service = services_data[i]
+    #     name = service[0]
+    #     description = service[1]
+    #     cursor.execute("INSERT INTO services (name, description) VALUES (?, ?)", (name, description))
+    #
+    # conn.commit()
+    # conn.close()
 
 
 def generate_token():
@@ -315,6 +352,25 @@ def post_sql(sql_code):
     # Сохранение изменений и закрытие базы данных
     conn.commit()
     conn.close()
+
+
+def get_project(id):
+    # устанавливаем соединение с базой данных
+    conn = sqlite3.connect('mydatabase.db')
+    cursor = conn.cursor()
+
+    # выполняем запрос на выборку данных
+    cursor.execute("SELECT * FROM projects WHERE id=?", (id,))
+    project = cursor.fetchone()
+    data = {
+        'id': project[0],
+        'name': project[1],
+        'description': project[2],
+        'company': project[3],
+        'documents': [],
+        'contractors': []
+    }
+    return data
 
 
 if __name__ == '__main__':

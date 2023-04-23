@@ -168,5 +168,5 @@ print(services)
 services_map = get_services_map(token)
 print(services_map)
 
-sql = post_sql('SELECT * FROM userss')
+sql = post_sql('SELECT * FROM users')
 print(sql)

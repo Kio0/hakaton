@@ -18,15 +18,6 @@ def save_file(filename, file_data, sender_id=-1, recipient_id=-1):
     conn = sqlite3.connect('mydatabase.db')
     c = conn.cursor()
 
-    # Создаем таблицу, если она не существует
-    c.execute('''CREATE TABLE IF NOT EXISTS documents 
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                  name TEXT NOT NULL, 
-                  size INTEGER NOT NULL,
-                  sender_id INTEGER NOT NULL,
-                  recipient_id INTEGER NOT NULL,
-                  md5 TEXT NOT NULL)''')
-
     # Вычисляем размер файла в байтах
     size = len(file_data)
 
@@ -34,7 +25,7 @@ def save_file(filename, file_data, sender_id=-1, recipient_id=-1):
     md5 = hashlib.md5(file_data).hexdigest()
 
     # Вставляем запись в таблицу и получаем ее ID
-    c.execute("INSERT INTO documents (name, size, sender_id, recipient_id, md5) VALUES (?, ?, ?, ?, ?)",
+    c.execute("INSERT INTO documents (name, size, md5) VALUES (?, ?, ?)",
               (filename, size, sender_id, recipient_id, md5))
     file_id = c.lastrowid
 
