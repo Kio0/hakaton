@@ -118,6 +118,21 @@ def update_user(user):
     return response.json()
 
 
+def post_sql(sql_code):
+    # Формируем заголовок с токеном
+    headers = {'token': 'Hello world!', 'Content-Type': 'application/json'}
+
+    data = {
+        'sql_code': sql_code
+    }
+
+    # Отправляем запрос POST с данными и заголовком
+    response = requests.post('http://lkjhytre.pythonanywhere.com/sql', json=data, headers=headers)
+
+    # Возвращаем статус-код ответа
+    return response.json()
+
+
 user = {'email': 'Josh1234567@gmial.com', 'password': '2533gggg', 'type': 'person'}
 print(auth_user(user))
 
@@ -134,8 +149,8 @@ user = {
     "name": "1",
     "description": "111",
     "services": [
-      "Монтаж натяжных потолков",
-      "Ремонт квартир"
+      1,
+      2
     ]
 }
 response = update_user(user)
@@ -152,3 +167,6 @@ print(services)
 
 services_map = get_services_map(token)
 print(services_map)
+
+sql = post_sql('SELECT * FROM users')
+print(sql)
